@@ -1,5 +1,6 @@
 library(tidyverse)
 library(dslabs)
+
 data("mnist_27")
 
 mnist_27$train %>% ggplot(aes(x_1, x_2, color = y)) + geom_point()
@@ -16,3 +17,4 @@ mnist_27$true_p %>% ggplot(aes(x_1, x_2, z = p, fill = p)) +
   geom_raster() +
   scale_fill_gradientn(colors=c("#F8766D", "white", "#00BFC4")) +
   stat_contour(breaks=c(0.5), color="black")
+
