@@ -51,6 +51,34 @@ train.control <- trainControl(method = "cv", number = 10)
 fit <- train(x_subset, y, method = "glm",  trControl = train.control)
 fit$results
 
+
+
+
+###################
+#Here is Professor's solution re-running the cross-validation for logistic regression:
+
+indexes <- createDataPartition(y, times = 5, p = 0.2)
+dat <- data.frame(y=y, data.frame(x))
+res <- sapply(indexes, function(test_index){
+  train_set <- slice(dat, -test_index)
+  test_set <- slice(dat, test_index)
+  
+  pvals <- colttests(as.matrix(train_set[,-1]), train_set$y)$p.value
+  
+  ind <- c(TRUE, pvals <= 0.01)
+  train_set <- train_set[, ind]
+  
+  fit <- glm(y ~ ., data = train_set, family = "binomial")
+  y_hat <- ifelse(predict(fit, newdata = test_set[, ind], type = "response") > 0.5, 1, 0) %>%
+    factor()
+  mean(y_hat == test_set$y)
+})
+res
+
+
+
+
+
 #Q7
 library(dslabs)
 data("tissue_gene_expression")
