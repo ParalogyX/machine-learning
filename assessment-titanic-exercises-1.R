@@ -202,12 +202,17 @@ plot(train_dt$finalModel)
 text(train_dt$finalModel)
 
 
+#Q11c
+predict(train_dt, titanic_clean %>% filter(Sex == "male" & Age>3.5))
+predict(train_dt, titanic_clean %>% filter(Sex == "female" & Pclass == 2))
+predict(train_dt, titanic_clean %>% filter(Sex == "female" & Pclass == 3 & Fare > 24))
 
+#Q12
+set.seed(14, sample.kind="Rounding")
+train_rf <- train(Survived ~ ., method = "rf", data = train_set, tuneGrid = data.frame(mtry = seq(1:7)), ntree = 100)
+train_rf$bestTune
+rf_model <- predict(train_rf, test_set)
+mean(rf_model == test_set$Survived)
 
-
-
-
-
-
-
+varImp(train_rf)
 
