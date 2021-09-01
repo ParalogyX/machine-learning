@@ -100,7 +100,7 @@ train_rf <- randomForest(y ~ ., data=mnist_27$train)
 confusionMatrix(predict(train_rf, mnist_27$test), mnist_27$test$y)$overall["Accuracy"]
 
 # use cross validation to choose parameter
-library(Rborist)
+#library(Rborist)
 train_rf_2 <- train(y ~ .,
                     method = "Rborist",
                     tuneGrid = data.frame(predFixed = 2, minNode = c(3, 50)),
