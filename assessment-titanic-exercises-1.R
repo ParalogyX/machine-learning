@@ -125,4 +125,89 @@ F_meas(as.factor(sex_model), test_set$Survived)
 F_meas(as.factor(class_model), test_set$Survived)
 F_meas(as.factor(sex_class_model), test_set$Survived)
 
+#Q7
+set.seed(1, sample.kind="Rounding")
+train_lda_fare <- train(Survived ~ Fare, method = "lda", data = train_set)
+lda_fare_model <- predict(train_lda_fare, test_set)
+mean(lda_fare_model == test_set$Survived)
+
+set.seed(1, sample.kind="Rounding")
+train_qda_fare <- train(Survived ~ Fare, method = "qda", data = train_set)
+qda_fare_model <- predict(train_qda_fare, test_set)
+mean(qda_fare_model == test_set$Survived)
+
+
+#Q8
+set.seed(1, sample.kind="Rounding")
+train_glm_age <- train(Survived ~ Age, method = "glm", data = train_set)
+glm_age_model <- predict(train_glm_age, test_set)
+mean(glm_age_model == test_set$Survived)
+
+
+set.seed(1, sample.kind="Rounding")
+train_glm_SCFA <- train(Survived ~ Sex + Pclass + Fare + Age, method = "glm", data = train_set)
+glm_SCFA_model <- predict(train_glm_SCFA, test_set)
+mean(glm_SCFA_model == test_set$Survived)
+
+
+set.seed(1, sample.kind="Rounding")
+train_glm_all <- train(Survived ~ ., method = "glm", data = train_set)
+glm_all_model <- predict(train_glm_all, test_set)
+mean(glm_all_model == test_set$Survived)
+
+#Q9a
+set.seed(6, sample.kind="Rounding")
+train_knn <- train(Survived ~ ., method = "knn", 
+              data = train_set,
+              tuneGrid = data.frame(k = seq(3, 51, 2)))
+train_knn$bestTune
+#9b
+ggplot(train_knn, highlight = TRUE)
+#9c
+knn_model <- predict(train_knn, test_set)
+mean(knn_model == test_set$Survived)
+
+#Q10
+
+set.seed(8, sample.kind="Rounding")
+control <- trainControl(method = "cv", number = 10, p = .9)
+train_knn_cv <- train(Survived ~ ., method = "knn", 
+                   data = train_set,
+                   tuneGrid = data.frame(k = seq(3, 51, 2)), trControl = control)
+train_knn_cv$bestTune
+
+ggplot(train_knn_cv, highlight = TRUE)
+
+knn_model_cv <- predict(train_knn_cv, test_set)
+mean(knn_model_cv == test_set$Survived)
+
+
+#Q11a
+set.seed(10, sample.kind="Rounding")
+train_dt <- train(Survived ~ ., method = "rpart", data = train_set, tuneGrid = data.frame(cp = seq(0, 0.05, 0.002)))
+
+train_dt$bestTune
+
+
+dt_model <- predict(train_dt, test_set)
+mean(dt_model == test_set$Survived)
+
+#Q11b
+imp <- varImp(train_dt)
+
+imp
+train_dt$finalModel
+
+plot(train_dt$finalModel)
+text(train_dt$finalModel)
+
+
+
+
+
+
+
+
+
+
 
