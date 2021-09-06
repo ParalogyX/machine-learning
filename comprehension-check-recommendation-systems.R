@@ -71,3 +71,23 @@ movielens %>%
   ggplot(aes(rate, rating)) +
   geom_point() +
   geom_smooth()
+
+#Q5
+movielens <- mutate(movielens, date = as_datetime(timestamp))
+
+#Q6
+movielens %>% 
+  group_by(week_n = round_date(date, unit = "week")) %>%
+  summarise(av_rating = mean(rating)) %>%
+  ggplot(aes(week_n, av_rating)) +
+  geom_point() + geom_smooth()
+            
+
+#I don't see any time effect
+#harvards solution is exactly the same, trend is the same. I thought it is too small to count :(
+movielens %>% mutate(date = round_date(date, unit = "week")) %>%
+  group_by(date) %>%
+  summarize(rating = mean(rating)) %>%
+  ggplot(aes(date, rating)) +
+  geom_point() +
+  geom_smooth()
