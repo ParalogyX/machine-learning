@@ -45,3 +45,29 @@ movielens %>%
   mutate(rate = n/years) %>%
   top_n(25, rate) %>%
   arrange(desc(rate))
+
+
+#Q3
+movielens %>% 
+  filter(year >= 1993) %>%
+  group_by(movieId) %>%
+  summarize(n = n(), years = 2018 - first(year),
+            title = title[1],
+            rating = mean(rating)) %>%
+  mutate(strata_rate = round(n/years)) %>% 
+  group_by(strata_rate) %>%
+  summarise(av_rating = mean(rating)) %>%
+  ggplot(aes(strata_rate, av_rating)) +
+  geom_line() + geom_smooth()
+
+#My answer is beter than Harvards, no stratification in their one:
+movielens %>% 
+  filter(year >= 1993) %>%
+  group_by(movieId) %>%
+  summarize(n = n(), years = 2018 - first(year),
+            title = title[1],
+            rating = mean(rating)) %>%
+  mutate(rate = n/years) %>%
+  ggplot(aes(rate, rating)) +
+  geom_point() +
+  geom_smooth()
