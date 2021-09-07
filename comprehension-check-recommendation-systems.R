@@ -91,3 +91,28 @@ movielens %>% mutate(date = round_date(date, unit = "week")) %>%
   ggplot(aes(date, rating)) +
   geom_point() +
   geom_smooth()
+
+#Q8
+movielens %>% 
+  group_by(genres) %>%
+  filter(n() > 1000) %>%
+  summarise(av = mean(rating), se = sd(rating)) %>%
+  ggplot(aes(genres, av)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = av - se, ymax = av+se)) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+movielens %>% 
+  group_by(genres) %>%
+  filter(n() > 1000) %>%
+  summarise(av = mean(rating), se = sd(rating)) %>% .[which.min(sum_stat$av),]
+
+#Harvards answer is better, because of reorder and correct se calculation:
+movielens %>% group_by(genres) %>%
+  summarize(n = n(), avg = mean(rating), se = sd(rating)/sqrt(n())) %>%
+  filter(n >= 1000) %>% 
+  mutate(genres = reorder(genres, avg)) %>%
+  ggplot(aes(x = genres, y = avg, ymin = avg - 2*se, ymax = avg + 2*se)) + 
+  geom_point() +
+  geom_errorbar() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
