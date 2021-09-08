@@ -62,12 +62,60 @@ overall <- mean(sapply(scores, mean))
 alpha = 25
 
 
-schools <- schools %>% mutate(reg_score = sapply(scores, function(x){
-  sum(x)/(length(x) + alpha) - overall
-}))
 
-schools %>% top_n(10, reg_score) %>% arrange(desc(reg_score))
+schools %>% mutate(reg_score = sapply(scores, function(x){
+  overall + sum(x - overall)/(length(x) + alpha)
+})) %>% top_n(10, reg_score) %>% arrange(desc(reg_score))
+
+#overall + sum(x - overall)/(length(x) + alpha) - only one correct option. Don't forget to add overall to average
+schools %>% mutate(reg_score = sapply(scores, function(x){
+  overall + sum(x - overall)/(length(x) + alpha)
+})) %>% ggplot(aes(size, reg_score)) +
+  geom_point() + gghighlight(rank<=10)
+
+#Q6
+RMSE <- function(true, predicted){
+  sqrt(mean((true - predicted)^2))
+}
+
+alphas <- seq(10, 250)
+
+rmses <- sapply(alphas, function(alpha){
+  reg_score = sapply(scores, function(x){
+    overall + sum(x - overall)/(length(x) + alpha)
+  }) 
+  return(RMSE(schools$quality, reg_score))
+})
+
+qplot(alphas, rmses)  
+alphas[which.min(rmses)]
+min(rmses)
+
+
+#Q7
+overall <- mean(sapply(scores, mean))
+
+alpha = alphas[which.min(rmses)]
 
 
 
+schools %>% mutate(reg_score = sapply(scores, function(x){
+  overall + sum(x - overall)/(length(x) + alpha)
+})) %>% top_n(10, reg_score) %>% arrange(desc(reg_score))
+
+
+
+#Q8
+alphas <- seq(10, 250)
+
+rmses <- sapply(alphas, function(alpha){
+  reg_score = sapply(scores, function(x){
+    sum(x)/(length(x) + alpha)
+  }) 
+  return(RMSE(schools$quality, reg_score))
+})
+
+qplot(alphas, rmses)  
+alphas[which.min(rmses)]
+min(rmses)
 
