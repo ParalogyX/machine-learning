@@ -66,7 +66,90 @@ plot(ss_yv)
 #Q5
 qplot(s$d, sqrt(ss_yv))
 
-#Q3
+#Q6
 sum(ss_yv[1:3])/sum(ss_yv)
 #in Harvards solution it is squared, but result is exactly the same
 sum(s$d[1:3]^2) / sum(s$d^2)
+
+#Q7
+identical(s$u %*% diag(s$d), sweep(s$u, 2, s$d, FUN = "*"))
+
+
+#Q8
+y_av <- rowMeans(y)
+ud <- sweep(s$u, 2, s$d, FUN = "*")
+
+qplot(y_av, ud[,1])
+
+#harvards answer:
+plot(s$u[,1]*s$d[1], rowMeans(y))
+
+
+#Q9
+my_image(s$v)
+
+
+#Q10
+plot(s$u[,1], ylim = c(-0.3, 0.3))
+plot(t(s$v)[1,], ylim = c(-0.3, 0.3))
+
+svd <- s$u[,1,drop=FALSE] * s$d[1] %*% t(s$v)[1,, drop = FALSE]
+my_image(svd)
+my_image(y)
+
+#Harvards solution is interesting:
+plot(s$u[,1], ylim = c(-0.25, 0.25))
+plot(s$v[,1], ylim = c(-0.25, 0.25))
+with(s, my_image((u[, 1, drop=FALSE]*d[1]) %*% t(v[, 1, drop=FALSE])))
+my_image(y)
+
+
+#Q11
+resid <- y - with(s,(u[, 1, drop=FALSE]*d[1]) %*% t(v[, 1, drop=FALSE]))
+my_image(cor(resid), zlim = c(-1,1))
+axis(side = 2, 1:ncol(y), rev(colnames(y)), las = 2)
+
+plot(s$u[,2], ylim = c(-0.5, 0.5))
+plot(s$v[,2], ylim = c(-0.5, 0.5))
+with(s, my_image((u[, 2, drop=FALSE]*d[2]) %*% t(v[, 2, drop=FALSE])))
+my_image(y)
+
+resid <- y - with(s,(u[, 2, drop=FALSE]*d[2]) %*% t(v[, 2, drop=FALSE]))
+my_image(cor(resid), zlim = c(-1,1))
+axis(side = 2, 1:ncol(y), rev(colnames(y)), las = 2)
+
+#Q12
+sum(s$d[1]^2)/sum(s$d^2) * 100
+sum(s$d[2]^2)/sum(s$d^2) * 100
+sum(s$d[3]^2)/sum(s$d^2) * 100
+sum(s$d[1:2]^2)/sum(s$d^2) * 100
+sum(s$d[1:3]^2)/sum(s$d^2) * 100
+
+resid <- y - with(s,sweep(u[, 1:2], 2, d[1:2], FUN="*") %*% t(v[, 1:2]))
+my_image(cor(resid), zlim = c(-1,1))
+axis(side = 2, 1:ncol(y), rev(colnames(y)), las = 2)
+
+plot(s$u[,3], ylim = c(-0.5, 0.5))
+plot(s$v[,3], ylim = c(-0.5, 0.5))
+with(s, my_image((u[, 3, drop=FALSE]*d[3]) %*% t(v[, 3, drop=FALSE])))
+my_image(resid)
+
+#Q13
+resid <- y - with(s,sweep(u[, 1:3], 2, d[1:3], FUN="*") %*% t(v[, 1:3]))
+my_image(cor(resid), zlim = c(-1,1))
+axis(side = 2, 1:ncol(y), rev(colnames(y)), las = 2)
+
+my_image(y, zlim = c(min(y),max(y)))
+
+with(s, my_image(sweep(u[, 1:3], 2, d[1:3], FUN="*") %*% t(v[, 1:3]), zlim = c(min(y),max(y))))
+
+resid <- y - with(s,sweep(u[, 1:3], 2, d[1:3], FUN="*") %*% t(v[, 1:3]))
+my_image(cor(resid), zlim = c(min(y),max(y)))
+axis(side = 2, 1:ncol(y), rev(colnames(y)), las = 2)
+
+
+#Harvard's answer is better:
+y_hat <- with(s,sweep(u[, 1:3], 2, d[1:3], FUN="*") %*% t(v[, 1:3]))
+my_image(y, zlim = range(y))
+my_image(y_hat, zlim = range(y))
+my_image(y - y_hat, zlim = range(y))
